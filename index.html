@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rafa-Ximometro.io 🔋</title>
+    <!-- INCLUIR FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: linear-gradient(to right top, #2e8b57, #00957d, #009ea2, #00a4c2, #31a7d9, #54a8e4, #74a8ec, #92a8f0, #9ea7f6, #aba5fa, #b9a3fd, #c9a0ff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2.2em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tagline {
+            opacity: 0.9;
+            margin-top: -5px;
+            font-size: 0.9em;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .energy-bar-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            height: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .energy-bar {
+            height: 100%;
+            background: linear-gradient(to right, #00ff00, #ffff00, #ff4444);
+            width: 100%;
+            position: relative;
+        }
+
+        .marker {
+            position: absolute;
+            top: -10px;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+            z-index: 10;
+        }
+
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .person-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .person-emoji {
+            font-size: 2em;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .person-info {
+            text-align: left;
+            flex: 1;
+        }
+
+        .person-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .person-battery {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .sync-status {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.8em;
+            }
+            
+            .person-status {
+                padding: 12px;
+            }
+            
+            .person-emoji {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="logo">🔋 Rafa-Ximometro.io</h1>
+        <p class="tagline">Vista combinada de energía ✨</p>
+        <div class="sync-status" id="syncStatus">🟡 Conectando...</div>
+    </div>
+    
+    <div class="container">
+        <div class="energy-bar-container">
+            <div class="energy-bar" id="energyBar">
+                <div class="marker" id="rafaMarker" style="left: 50%;">🧔🏻</div>
+                <div class="marker" id="ximenaMarker" style="left: 50%;">🥷🏻</div>
+            </div>
+        </div>
+
+        <div class="status-container">
+            <div class="person-status">
+                <div class="person-emoji" id="rafaEmoji">🧔🏻</div>
+                <div class="person-info">
+                    <div class="person-name">Rafa</div>
+                    <div class="person-battery" id="rafaBattery">Cargando...</div>
+                </div>
+            </div>
+
+            <div class="person-status">
+                <div class="person-emoji" id="ximenaEmoji">🥷🏻</div>
+                <div class="person-info">
+                    <div class="person-name">Ximena</div>
+                    <div class="person-battery" id="ximenaBattery">Cargando...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sync-status">
+            Actualizado: <span id="lastUpdate">Cargando...</span>
+        </div>
+    </div>
+
+    <script>
+        // =============================================
+        // CONFIGURACIÓN DE FIREBASE
+        // =============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9SZzsrV-xYwQsREScGt0sT6VSK6mPhVw",
+            authDomain: "ximometro1.firebaseapp.com",
+            databaseURL: "https://ximometro1-default-rtdb.firebaseio.com",
+            projectId: "ximometro1",
+            storageBucket: "ximometro1.firebasestorage.app",
+            messagingSenderId: "417707299028",
+            appId: "1:417707299028:web:7f317639f4f137fd45eb41"
+        };
+
+        // Inicializar Firebase
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log("Firebase conectado correctamente");
+        } catch (error) {
+            console.log("Error Firebase:", error);
+        }
+
+        const syncStatus = document.getElementById('syncStatus');
+        const lastUpdate = document.getElementById('lastUpdate');
+        const rafaMarker = document.getElementById('rafaMarker');
+        const ximenaMarker = document.getElementById('ximenaMarker');
+        const rafaEmoji = document.getElementById('rafaEmoji');
+        const ximenaEmoji = document.getElementById('ximenaEmoji');
+        const rafaBattery = document.getElementById('rafaBattery');
+        const ximenaBattery = document.getElementById('ximenaBattery');
+
+        let rafaData = { battery: 50, emoji: '🦸🏻' };
+        let ximenaData = { battery: 50, emoji: '🥷🏻' };
+
+        // =============================================
+        // SINCRONIZACIÓN CON FIREBASE
+        // =============================================
+
+        function loadFromDatabase() {
+            if (!database) {
+                syncStatus.textContent = "🟡 Modo local - Sin sincronización";
+                return;
+            }
+            
+            // Cargar datos de Rafa
+            database.ref('ximometro/rafa/status').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    rafaData = {
+                        battery: data.battery || 50,
+                        emoji: data.selectedEmoji || '🦸🏻'
+                    };
+                    updateDisplay();
+                    updateLastUpdate();
+                }
+            });
+
+            // Cargar datos de Ximena
+            database.ref('ximometro/ximena/status').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    ximenaData = {
+                        battery: data.battery || 50,
+                        emoji: data.selectedEmoji || '🥷🏻'
+                    };
+                    updateDisplay();
+                    updateLastUpdate();
+                }
+            });
+        }
+
+        function updateDisplay() {
+            // Actualizar marcadores en la barra
+            rafaMarker.style.left = rafaData.battery + '%';
+            ximenaMarker.style.left = ximenaData.battery + '%';
+
+            // Actualizar emojis
+            rafaEmoji.textContent = rafaData.emoji;
+            ximenaEmoji.textContent = ximenaData.emoji;
+
+            // Actualizar textos de batería
+            rafaBattery.innerHTML = getBatteryText(rafaData.battery, 'Rafa');
+            ximenaBattery.innerHTML = getBatteryText(ximenaData.battery, 'Ximena');
+
+            syncStatus.textContent = "🟢 Sincronizado en tiempo real";
+            syncStatus.style.color = "#90EE90";
+        }
+
+        function getBatteryText(percentage, name) {
+            let status, emoji;
+            
+            if (percentage >= 80) {
+                status = "¡Energía al máximo!";
+                emoji = name === 'Rafa' ? "🚀" : "🎯";
+            } else if (percentage >= 60) {
+                status = "Buen nivel de energía";
+                emoji = "✨";
+            } else if (percentage >= 40) {
+                status = "Energía moderada";
+                emoji = "💫";
+            } else if (percentage >= 20) {
+                status = "Poca energía";
+                emoji = "🌫️";
+            } else {
+                status = "Sin energía";
+                emoji = "💤";
+            }
+            
+            return `<strong>${percentage}%</strong> - ${status} ${emoji}`;
+        }
+
+        function updateLastUpdate() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-MX', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            lastUpdate.textContent = timeString;
+        }
+
+        // Cargar al iniciar
+        window.addEventListener('load', function() {
+            loadFromDatabase();
+        });
+
+        // Actualizar automáticamente cada 30 segundos
+        setInterval(updateLastUpdate, 30000);
+    </script>
+</body>
+</html>
