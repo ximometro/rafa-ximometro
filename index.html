@@ -17,7 +17,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Cambiado para mejor distribución */
+  justify-content: flex-start;
   color: white;
   text-align: center;
   }
@@ -52,7 +52,7 @@
   flex-direction: column;
   align-items: center;
   gap: 25px;
-  max-width: 500px; /* Aumentado el ancho máximo */
+  max-width: 500px;
   width: 100%;
   flex: 1;
   }
@@ -67,8 +67,8 @@
 
   .energy-bar-container {
   position: relative;
-  width: 120px; /* Más ancho */
-  height: 300px; /* Más alto */
+  width: 120px;
+  height: 300px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   border: 3px solid white;
@@ -88,16 +88,25 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 2.2em; /* Emojis más grandes */
+  font-size: 2.2em;
   filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
   z-index: 10;
   transition: top 0.5s ease;
   }
 
+  /* Separar los marcadores cuando están cerca */
+  .marker.rafa {
+  transform: translateX(-60%); /* Mover Rafa a la izquierda */
+  }
+  
+  .marker.ximena {
+  transform: translateX(-40%); /* Mover Ximena a la derecha */
+  }
+
   .status-container {
   display: flex;
   flex-direction: column;
-  gap: 25px; /* Más espacio entre tarjetas */
+  gap: 25px;
   width: 100%;
   max-width: 400px;
   }
@@ -105,8 +114,8 @@
   .person-status {
   display: flex;
   align-items: center;
-  gap: 20px; /* Más espacio entre elementos */
-  padding: 20px; /* Más padding */
+  gap: 20px;
+  padding: 20px;
   background: rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -114,9 +123,9 @@
   }
 
   .person-emoji {
-  font-size: 2.5em; /* Emojis más grandes */
+  font-size: 2.5em;
   filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
-  min-width: 60px; /* Espacio consistente */
+  min-width: 60px;
   }
 
   .person-info {
@@ -126,25 +135,25 @@
 
   .person-name {
   font-weight: bold;
-  font-size: 1.3em; /* Texto más grande */
+  font-size: 1.3em;
   margin-bottom: 8px;
   }
 
   .person-battery {
-  font-size: 1em; /* Texto más legible */
+  font-size: 1em;
   opacity: 0.9;
   line-height: 1.4;
   }
 
-  .last-update {
-  font-size: 0.85em;
+  /* ESTILO ORIGINAL DE LA HORA - SIN FONDO */
+  .sync-status.bottom {
+  font-size: 0.8em;
   opacity: 0.7;
-  margin-top: 10px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  width: 100%;
-  max-width: 400px;
+  margin-top: 5px;
+  background: transparent; /* Sin fondo */
+  padding: 0; /* Sin padding */
+  border-radius: 0; /* Sin bordes redondeados */
+  width: auto; /* Ancho automático */
   }
 
   /* Mejoras para móviles */
@@ -188,38 +197,22 @@
     gap: 20px;
   }
   }
-
-  @media (max-width: 350px) {
-  .logo {
-    font-size: 1.8em;
-  }
-  
-  .energy-bar-container {
-    width: 90px;
-    height: 220px;
-  }
-  
-  .person-status {
-    padding: 12px;
-  }
-  }
  </style>
 </head>
 <body>
- <!-- HEADER MEJORADO Y SEPARADO -->
  <div class="header">
   <h1 class="logo">🔋 Rafa-Ximometro.io</h1>
   <p class="tagline">Vista combinada de energía ✨</p>
   <div class="sync-status" id="syncStatus">🟡 Conectando...</div>
  </div>
  
- <!-- CONTENIDO PRINCIPAL MÁS ESPACIOSO -->
  <div class="container">
   <div class="energy-section">
    <div class="energy-bar-container">
     <div class="energy-bar" id="energyBar"></div>
-    <div class="marker" id="rafaMarker" style="top: 150px;">🧔🏻</div>
-    <div class="marker" id="ximenaMarker" style="top: 150px;">🥷🏻</div>
+    <!-- Añadido clases para separar los marcadores -->
+    <div class="marker rafa" id="rafaMarker" style="top: 150px;">🧔🏻</div>
+    <div class="marker ximena" id="ximenaMarker" style="top: 150px;">🥷🏻</div>
    </div>
   </div>
 
@@ -241,8 +234,9 @@
    </div>
   </div>
   
-  <div class="last-update">
-   Actualizado: <span id="lastUpdate">Cargando...</span>
+  <!-- HORA COMO EN LOS INDIVIDUALES - SIN FONDO -->
+  <div class="sync-status bottom">
+   Última actualización: <span id="lastUpdate">Cargando...</span>
   </div>
  </div>
 
@@ -297,7 +291,7 @@
    const data = snapshot.val();
    if (data) {
     rafaData = {
-    battery: data.battery || 50,
+    battery: data.battery || 0, // CORREGIDO: 0 por defecto en lugar de 50
     emoji: data.selectedEmoji || '🦸🏻'
     };
     updateDisplay();
@@ -310,7 +304,7 @@
    const data = snapshot.val();
    if (data) {
     ximenaData = {
-    battery: data.battery || 50,
+    battery: data.battery || 0, // CORREGIDO: 0 por defecto en lugar de 50
     emoji: data.selectedEmoji || '🥷🏻'
     };
     updateDisplay();
@@ -320,17 +314,26 @@
   }
 
   function updateDisplay() {
-  // Actualizar posición de marcadores (arriba = 0%, abajo = 100%)
-  const barHeight = 300; // Nueva altura de la barra
-  const markerHeight = 50; // Altura aproximada del emoji más grande
+  // CORREGIDO: Cálculo correcto de posición (igual que en individuales)
+  const barHeight = 300;
+  const markerHeight = 50;
   
-  const rafaPosition = barHeight - (rafaData.battery / 100) * barHeight - (markerHeight / 2);
-  const ximenaPosition = barHeight - (ximenaData.battery / 100) * barHeight - (markerHeight / 2);
+  // Cálculo igual que en los individuales: 0% = abajo, 100% = arriba
+  const rafaPosition = (barHeight - markerHeight) - ((rafaData.battery / 100) * (barHeight - markerHeight));
+  const ximenaPosition = (barHeight - markerHeight) - ((ximenaData.battery / 100) * (barHeight - markerHeight));
   
   rafaMarker.style.top = Math.max(0, Math.min(barHeight - markerHeight, rafaPosition)) + 'px';
   ximenaMarker.style.top = Math.max(0, Math.min(barHeight - markerHeight, ximenaPosition)) + 'px';
 
-  // Actualizar emojis en ambos lugares
+  // Separar aún más si están muy cerca (misma posición)
+  const positionDiff = Math.abs(rafaPosition - ximenaPosition);
+  if (positionDiff < 10) { // Si están a menos de 10px de distancia
+   // Mover Rafa un poco más arriba y Ximena un poco más abajo
+   rafaMarker.style.top = (Math.max(0, Math.min(barHeight - markerHeight, rafaPosition - 5))) + 'px';
+   ximenaMarker.style.top = (Math.max(0, Math.min(barHeight - markerHeight, ximenaPosition + 5))) + 'px';
+  }
+
+  // Actualizar emojis
   rafaMarker.textContent = rafaData.emoji;
   rafaEmoji.textContent = rafaData.emoji;
   
