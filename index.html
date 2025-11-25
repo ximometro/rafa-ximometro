@@ -1,393 +1,395 @@
+<!-- 
+    ╔══════════════════════╗
+    ║   Rafa-Ximometro.io  ║
+    ║      Para Xime       ║
+    ║   2025 ⚡🥷🏻👩🏻‍🎨   ║
+    ╚══════════════════════╝
+-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Rafa-Ximometro.io 🔋</title>
- <!-- INCLUIR FIREBASE -->
- <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
- <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
- <style>
-  body {
-  margin: 0;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-image: linear-gradient(to right top, #2e8b57, #00957d, #009ea2, #00a4c2, #31a7d9, #54a8e4, #74a8ec, #92a8f0, #9ea7f6, #aba5fa, #b9a3fd, #c9a0ff);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  color: white;
-  text-align: center;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rafa-Ximometro.io 🔋</title>
+    <!-- INCLUIR FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: linear-gradient(to right top, #2e8b57, #00957d, #009ea2, #00a4c2, #31a7d9, #54a8e4, #74a8ec, #92a8f0, #9ea7f6, #aba5fa, #b9a3fd, #c9a0ff);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            text-align: center;
+        }
 
-  .header {
-  margin-bottom: 20px;
-  width: 100%;
-  max-width: 500px;
-  }
+        .header {
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
 
-  .logo {
-  font-size: 2.5em;
-  margin: 0 0 10px 0;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  }
+        .logo {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
 
-  .tagline {
-  opacity: 0.9;
-  margin-bottom: 10px;
-  font-size: 1em;
-  }
+        .tagline {
+            opacity: 0.9;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
 
-  .sync-status {
-  font-size: 0.9em;
-  opacity: 0.8;
-  margin-bottom: 10px;
-  font-weight: bold;
-  }
+        .sync-status {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
 
-  .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 25px;
-  max-width: 500px;
-  width: 100%;
-  flex: 1;
-  }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            max-width: 500px;
+            width: 100%;
+            flex: 1;
+        }
 
-  .energy-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 10px 0;
-  width: 100%;
-  }
+        .energy-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            width: 100%;
+        }
 
-  .energy-bar-container {
-  position: relative;
-  width: 120px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  border: 3px solid white;
-  overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-  }
+        .energy-bar-container {
+            position: relative;
+            width: 140px; /* Más ancho para los carriles */
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 3px solid white;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
 
-  .energy-bar {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: linear-gradient(to bottom, #00ff00, #ffff00, #ff4444);
-  height: 100%;
-  }
+        .energy-bar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to bottom, #00ff00, #ffff00, #ff4444);
+            height: 100%;
+        }
 
-  .marker {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 2.2em;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
-  z-index: 10;
-  transition: top 0.5s ease;
-  }
+        .marker {
+            position: absolute;
+            font-size: 2.5em; /* Más grandes */
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+            z-index: 10;
+            transition: top 0.5s ease;
+        }
 
-  /* Separar los marcadores cuando están cerca */
-  .marker.rafa {
-  transform: translateX(-60%); /* Mover Rafa a la izquierda */
-  }
-  
-  .marker.ximena {
-  transform: translateX(-40%); /* Mover Ximena a la derecha */
-  }
+        /* CARRILES SEPARADOS - como Mario Kart */
+        .marker.rafa {
+            left: 30%; /* Carril izquierdo */
+            transform: translateX(-50%);
+        }
+        
+        .marker.ximena {
+            left: 70%; /* Carril derecho */
+            transform: translateX(-50%);
+        }
 
-  .status-container {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  width: 100%;
-  max-width: 400px;
-  }
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+            max-width: 400px;
+        }
 
-  .person-status {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  }
+        .person-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
 
-  .person-emoji {
-  font-size: 2.5em;
-  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
-  min-width: 60px;
-  }
+        .person-emoji {
+            font-size: 2.5em;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+            min-width: 60px;
+        }
 
-  .person-info {
-  text-align: left;
-  flex: 1;
-  }
+        .person-info {
+            text-align: left;
+            flex: 1;
+        }
 
-  .person-name {
-  font-weight: bold;
-  font-size: 1.3em;
-  margin-bottom: 8px;
-  }
+        .person-name {
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-bottom: 8px;
+        }
 
-  .person-battery {
-  font-size: 1em;
-  opacity: 0.9;
-  line-height: 1.4;
-  }
+        .person-battery {
+            font-size: 1em;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
 
-  /* ESTILO ORIGINAL DE LA HORA - SIN FONDO */
-  .sync-status.bottom {
-  font-size: 0.8em;
-  opacity: 0.7;
-  margin-top: 5px;
-  background: transparent; /* Sin fondo */
-  padding: 0; /* Sin padding */
-  border-radius: 0; /* Sin bordes redondeados */
-  width: auto; /* Ancho automático */
-  }
+        /* ESTILO ORIGINAL DE LA HORA - SIN FONDO */
+        .sync-status.bottom {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 5px;
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            width: auto;
+        }
 
-  /* Mejoras para móviles */
-  @media (max-width: 480px) {
-  .header {
-    margin-bottom: 15px;
-  }
-  
-  .logo {
-    font-size: 2.2em;
-  }
-  
-  .tagline {
-    font-size: 0.9em;
-  }
-  
-  .energy-bar-container {
-    width: 100px;
-    height: 250px;
-  }
-  
-  .marker {
-    font-size: 1.8em;
-  }
-  
-  .person-status {
-    padding: 15px;
-    gap: 15px;
-  }
-  
-  .person-emoji {
-    font-size: 2em;
-    min-width: 50px;
-  }
-  
-  .person-name {
-    font-size: 1.2em;
-  }
-  
-  .status-container {
-    gap: 20px;
-  }
-  }
- </style>
+        /* Mejoras para móviles */
+        @media (max-width: 480px) {
+            .header {
+                margin-bottom: 15px;
+            }
+            
+            .logo {
+                font-size: 2.2em;
+            }
+            
+            .tagline {
+                font-size: 0.9em;
+            }
+            
+            .energy-bar-container {
+                width: 120px;
+                height: 250px;
+            }
+            
+            .marker {
+                font-size: 2em;
+            }
+            
+            .person-status {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .person-emoji {
+                font-size: 2em;
+                min-width: 50px;
+            }
+            
+            .person-name {
+                font-size: 1.2em;
+            }
+            
+            .status-container {
+                gap: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
- <div class="header">
-  <h1 class="logo">🔋 Rafa-Ximometro.io</h1>
-  <p class="tagline">Vista combinada de energía ✨</p>
-  <div class="sync-status" id="syncStatus">🟡 Conectando...</div>
- </div>
- 
- <div class="container">
-  <div class="energy-section">
-   <div class="energy-bar-container">
-    <div class="energy-bar" id="energyBar"></div>
-    <!-- Añadido clases para separar los marcadores -->
-    <div class="marker rafa" id="rafaMarker" style="top: 150px;">🧔🏻</div>
-    <div class="marker ximena" id="ximenaMarker" style="top: 150px;">🥷🏻</div>
-   </div>
-  </div>
-
-  <div class="status-container">
-   <div class="person-status">
-    <div class="person-emoji" id="rafaEmoji">🧔🏻</div>
-    <div class="person-info">
-     <div class="person-name">Rafa</div>
-     <div class="person-battery" id="rafaBattery">Cargando...</div>
+    <div class="header">
+        <h1 class="logo">🔋 Rafa-Ximometro.io</h1>
+        <p class="tagline">Vista combinada de energía ✨</p>
+        <div class="sync-status" id="syncStatus">🟡 Conectando...</div>
     </div>
-   </div>
+    
+    <div class="container">
+        <div class="energy-section">
+            <div class="energy-bar-container">
+                <div class="energy-bar" id="energyBar"></div>
+                <!-- CARRILES SEPARADOS - Mario Kart style -->
+                <div class="marker rafa" id="rafaMarker" style="top: 150px;">🧔🏻</div>
+                <div class="marker ximena" id="ximenaMarker" style="top: 150px;">🥷🏻</div>
+            </div>
+        </div>
 
-   <div class="person-status">
-    <div class="person-emoji" id="ximenaEmoji">🥷🏻</div>
-    <div class="person-info">
-     <div class="person-name">Ximena</div>
-     <div class="person-battery" id="ximenaBattery">Cargando...</div>
+        <div class="status-container">
+            <div class="person-status">
+                <div class="person-emoji" id="rafaEmoji">🧔🏻</div>
+                <div class="person-info">
+                    <div class="person-name">Rafa</div>
+                    <div class="person-battery" id="rafaBattery">Cargando...</div>
+                </div>
+            </div>
+
+            <div class="person-status">
+                <div class="person-emoji" id="ximenaEmoji">🥷🏻</div>
+                <div class="person-info">
+                    <div class="person-name">Ximena</div>
+                    <div class="person-battery" id="ximenaBattery">Cargando...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- HORA COMO EN LOS INDIVIDUALES - SIN FONDO -->
+        <div class="sync-status bottom">
+            Última actualización: <span id="lastUpdate">Cargando...</span>
+        </div>
     </div>
-   </div>
-  </div>
-  
-  <!-- HORA COMO EN LOS INDIVIDUALES - SIN FONDO -->
-  <div class="sync-status bottom">
-   Última actualización: <span id="lastUpdate">Cargando...</span>
-  </div>
- </div>
 
- <script>
-  // =============================================
-  // CONFIGURACIÓN DE FIREBASE
-  // =============================================
-  const firebaseConfig = {
-  apiKey: "AIzaSyC9SZzsrV-xYwQsREScGt0sT6VSK6mPhVw",
-  authDomain: "ximometro1.firebaseapp.com",
-  databaseURL: "https://ximometro1-default-rtdb.firebaseio.com",
-  projectId: "ximometro1",
-  storageBucket: "ximometro1.firebasestorage.app",
-  messagingSenderId: "417707299028",
-  appId: "1:417707299028:web:7f317639f4f137fd45eb41"
-  };
+    <script>
+        // =============================================
+        // CONFIGURACIÓN DE FIREBASE
+        // =============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9SZzsrV-xYwQsREScGt0sT6VSK6mPhVw",
+            authDomain: "ximometro1.firebaseapp.com",
+            databaseURL: "https://ximometro1-default-rtdb.firebaseio.com",
+            projectId: "ximometro1",
+            storageBucket: "ximometro1.firebasestorage.app",
+            messagingSenderId: "417707299028",
+            appId: "1:417707299028:web:7f317639f4f137fd45eb41"
+        };
 
-  // Inicializar Firebase
-  let database;
-  try {
-  firebase.initializeApp(firebaseConfig);
-  database = firebase.database();
-  console.log("Firebase conectado correctamente");
-  } catch (error) {
-  console.log("Error Firebase:", error);
-  }
+        // Inicializar Firebase
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log("Firebase conectado correctamente");
+        } catch (error) {
+            console.log("Error Firebase:", error);
+        }
 
-  const syncStatus = document.getElementById('syncStatus');
-  const lastUpdate = document.getElementById('lastUpdate');
-  const rafaMarker = document.getElementById('rafaMarker');
-  const ximenaMarker = document.getElementById('ximenaMarker');
-  const rafaEmoji = document.getElementById('rafaEmoji');
-  const ximenaEmoji = document.getElementById('ximenaEmoji');
-  const rafaBattery = document.getElementById('rafaBattery');
-  const ximenaBattery = document.getElementById('ximenaBattery');
+        const syncStatus = document.getElementById('syncStatus');
+        const lastUpdate = document.getElementById('lastUpdate');
+        const rafaMarker = document.getElementById('rafaMarker');
+        const ximenaMarker = document.getElementById('ximenaMarker');
+        const rafaEmoji = document.getElementById('rafaEmoji');
+        const ximenaEmoji = document.getElementById('ximenaEmoji');
+        const rafaBattery = document.getElementById('rafaBattery');
+        const ximenaBattery = document.getElementById('ximenaBattery');
 
-  let rafaData = { battery: 50, emoji: '🦸🏻' };
-  let ximenaData = { battery: 50, emoji: '🥷🏻' };
+        let rafaData = { battery: 50, emoji: '🦸🏻' };
+        let ximenaData = { battery: 50, emoji: '🥷🏻' };
 
-  // =============================================
-  // SINCRONIZACIÓN CON FIREBASE
-  // =============================================
+        // =============================================
+        // SINCRONIZACIÓN CON FIREBASE
+        // =============================================
 
-  function loadFromDatabase() {
-  if (!database) {
-   syncStatus.textContent = "🟡 Modo local - Sin sincronización";
-   return;
-  }
-  
-  // Cargar datos de Rafa
-  database.ref('ximometro/rafa/status').on('value', (snapshot) => {
-   const data = snapshot.val();
-   if (data) {
-    rafaData = {
-    battery: data.battery || 0, // CORREGIDO: 0 por defecto en lugar de 50
-    emoji: data.selectedEmoji || '🦸🏻'
-    };
-    updateDisplay();
-    updateLastUpdate();
-   }
-  });
+        function loadFromDatabase() {
+            if (!database) {
+                syncStatus.textContent = "🟡 Modo local - Sin sincronización";
+                return;
+            }
+            
+            // Cargar datos de Rafa
+            database.ref('ximometro/rafa/status').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    rafaData = {
+                        battery: data.battery || 0,
+                        emoji: data.selectedEmoji || '🦸🏻'
+                    };
+                    updateDisplay();
+                    updateLastUpdate();
+                }
+            });
 
-  // Cargar datos de Ximena
-  database.ref('ximometro/ximena/status').on('value', (snapshot) => {
-   const data = snapshot.val();
-   if (data) {
-    ximenaData = {
-    battery: data.battery || 0, // CORREGIDO: 0 por defecto en lugar de 50
-    emoji: data.selectedEmoji || '🥷🏻'
-    };
-    updateDisplay();
-    updateLastUpdate();
-   }
-  });
-  }
+            // Cargar datos de Ximena
+            database.ref('ximometro/ximena/status').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    ximenaData = {
+                        battery: data.battery || 0,
+                        emoji: data.selectedEmoji || '🥷🏻'
+                    };
+                    updateDisplay();
+                    updateLastUpdate();
+                }
+            });
+        }
 
-  function updateDisplay() {
-  // CORREGIDO: Cálculo correcto de posición (igual que en individuales)
-  const barHeight = 300;
-  const markerHeight = 50;
-  
-  // Cálculo igual que en los individuales: 0% = abajo, 100% = arriba
-  const rafaPosition = (barHeight - markerHeight) - ((rafaData.battery / 100) * (barHeight - markerHeight));
-  const ximenaPosition = (barHeight - markerHeight) - ((ximenaData.battery / 100) * (barHeight - markerHeight));
-  
-  rafaMarker.style.top = Math.max(0, Math.min(barHeight - markerHeight, rafaPosition)) + 'px';
-  ximenaMarker.style.top = Math.max(0, Math.min(barHeight - markerHeight, ximenaPosition)) + 'px';
+        function updateDisplay() {
+            const barHeight = 300;
+            const markerHeight = 60; // Más alto para emojis más grandes
+            
+            // Cálculo de posición: 0% = abajo, 100% = arriba
+            // Ajustamos para que NUNCA se escondan los emojis
+            const rafaPosition = Math.max(10, Math.min(barHeight - markerHeight - 10, 
+                (barHeight - markerHeight) - ((rafaData.battery / 100) * (barHeight - markerHeight))));
+            
+            const ximenaPosition = Math.max(10, Math.min(barHeight - markerHeight - 10,
+                (barHeight - markerHeight) - ((ximenaData.battery / 100) * (barHeight - markerHeight))));
+            
+            rafaMarker.style.top = rafaPosition + 'px';
+            ximenaMarker.style.top = ximenaPosition + 'px';
 
-  // Separar aún más si están muy cerca (misma posición)
-  const positionDiff = Math.abs(rafaPosition - ximenaPosition);
-  if (positionDiff < 10) { // Si están a menos de 10px de distancia
-   // Mover Rafa un poco más arriba y Ximena un poco más abajo
-   rafaMarker.style.top = (Math.max(0, Math.min(barHeight - markerHeight, rafaPosition - 5))) + 'px';
-   ximenaMarker.style.top = (Math.max(0, Math.min(barHeight - markerHeight, ximenaPosition + 5))) + 'px';
-  }
+            // Actualizar emojis
+            rafaMarker.textContent = rafaData.emoji;
+            rafaEmoji.textContent = rafaData.emoji;
+            
+            ximenaMarker.textContent = ximenaData.emoji;
+            ximenaEmoji.textContent = ximenaData.emoji;
 
-  // Actualizar emojis
-  rafaMarker.textContent = rafaData.emoji;
-  rafaEmoji.textContent = rafaData.emoji;
-  
-  ximenaMarker.textContent = ximenaData.emoji;
-  ximenaEmoji.textContent = ximenaData.emoji;
+            // Actualizar textos de batería
+            rafaBattery.innerHTML = getBatteryText(rafaData.battery, 'Rafa');
+            ximenaBattery.innerHTML = getBatteryText(ximenaData.battery, 'Ximena');
 
-  // Actualizar textos de batería
-  rafaBattery.innerHTML = getBatteryText(rafaData.battery, 'Rafa');
-  ximenaBattery.innerHTML = getBatteryText(ximenaData.battery, 'Ximena');
+            syncStatus.textContent = "🟢 Sincronizado en tiempo real";
+            syncStatus.style.color = "#90EE90";
+        }
 
-  syncStatus.textContent = "🟢 Sincronizado en tiempo real";
-  syncStatus.style.color = "#90EE90";
-  }
+        function getBatteryText(percentage, name) {
+            let status, emoji;
+            
+            if (percentage >= 80) {
+                status = "¡Energía al máximo!";
+                emoji = name === 'Rafa' ? "🚀" : "🎯";
+            } else if (percentage >= 60) {
+                status = "Buen nivel de energía";
+                emoji = "✨";
+            } else if (percentage >= 40) {
+                status = "Energía moderada";
+                emoji = "💫";
+            } else if (percentage >= 20) {
+                status = "Poca energía";
+                emoji = "🌫️";
+            } else {
+                status = "Sin energía";
+                emoji = "💤";
+            }
+            
+            return `<strong>${percentage}%</strong> - ${status} ${emoji}`;
+        }
 
-  function getBatteryText(percentage, name) {
-  let status, emoji;
-  
-  if (percentage >= 80) {
-   status = "¡Energía al máximo!";
-   emoji = name === 'Rafa' ? "🚀" : "🎯";
-  } else if (percentage >= 60) {
-   status = "Buen nivel de energía";
-   emoji = "✨";
-  } else if (percentage >= 40) {
-   status = "Energía moderada";
-   emoji = "💫";
-  } else if (percentage >= 20) {
-   status = "Poca energía";
-   emoji = "🌫️";
-  } else {
-   status = "Sin energía";
-   emoji = "💤";
-  }
-  
-  return `<strong>${percentage}%</strong> - ${status} ${emoji}`;
-  }
+        function updateLastUpdate() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-MX', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            lastUpdate.textContent = timeString;
+        }
 
-  function updateLastUpdate() {
-  const now = new Date();
-  const timeString = now.toLocaleTimeString('es-MX', { 
-   hour: '2-digit', 
-   minute: '2-digit',
-   second: '2-digit'
-  });
-  lastUpdate.textContent = timeString;
-  }
+        // Cargar al iniciar
+        window.addEventListener('load', function() {
+            loadFromDatabase();
+        });
 
-  // Cargar al iniciar
-  window.addEventListener('load', function() {
-  loadFromDatabase();
-  });
-
-  // Actualizar automáticamente cada 30 segundos
-  setInterval(updateLastUpdate, 30000);
- </script>
+        // Actualizar automáticamente cada 30 segundos
+        setInterval(updateLastUpdate, 30000);
+    </script>
 </body>
 </html>
